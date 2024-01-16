@@ -22,12 +22,29 @@ export class ReviewService {
       .exec();
   }
 
+  async getProductTotalRating(productId: string): Promise<number> {
+    return await this.reviewModel
+      .find({
+        productId,
+      })
+      .then((reviews: Review[]) => {
+        const totalRating = reviews.reduce(
+          (rating: number, currentReview: Review) => {
+            return rating + currentReview.rating;
+          },
+          0,
+        );
+        return totalRating / reviews.length;
+      });
+  }
+
   async addReview(review: Review): Promise<Review> {
     return this.reviewModel.create({
       comment: review.comment,
       rating: review.rating,
       username: review.username,
       productId: review.productId,
+      createdAt: review.createdAt,
     });
   }
 }

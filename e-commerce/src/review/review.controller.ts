@@ -23,4 +23,11 @@ export class ReviewController {
     console.log(review);
     return this.reviewService.addReview(review);
   }
+
+  @Get('reviews/rating/:productId')
+  async getProductReviewsRating(
+    @Param('productId') productId: string,
+  ): Promise<number> {
+    return this.reviewService.getProductTotalRating(productId);
+  }
 }
