@@ -1,5 +1,6 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { Document } from 'mongoose';
+import { Category } from 'src/mongo/category.schema';
 @Schema({ collection: 'Product' })
 export class Product extends Document {
   @Prop()
@@ -23,8 +24,11 @@ export class Product extends Document {
   @Prop()
   description: string;
 
+  @Prop({ type: Date })
+  createdAt: Date;
+
   @Prop()
-  category: string;
+  category: Category;
 }
 
 export const ProductSchema = SchemaFactory.createForClass(Product);
