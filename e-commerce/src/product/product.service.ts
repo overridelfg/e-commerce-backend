@@ -14,7 +14,7 @@ export class ProductService {
   ) {}
 
   async getAllProducts(dto: GetAllProductsDto = {}): Promise<Product[]> {
-    const { sort, searhTerm } = dto;
+    const { sort, searchTerm } = dto;
     const { skip } = this.paginationService.getPagination(dto);
 
     const sortBy = {};
@@ -23,16 +23,31 @@ export class ProductService {
       sortBy['price'] = 1;
     } else if (sort === EnumProductSort.HIGH_PRCIE) {
       sortBy['price'] = -1;
+    } else if (sort === EnumProductSort.OLDEST) {
+      sortBy['createdAt'] = 1;
+    } else {
+      sortBy['createdAt'] = -1;
     }
 
-    console.log(searhTerm);
-    return searhTerm
+    console.log(searchTerm);
+    return searchTerm
       ? await this.productModel
           .find({
-            title: {
-              $regex: searhTerm,
-              $options: 'i',
-            },
+            $or: [
+              {
+                title: {
+                  $regex: searchTerm,
+                  $options: 'i',
+                },
+                // description: {
+                //   $regex: searchTerm,
+                //   $options: 'i',
+                // },
+                // category: {
+                //   name: searchTerm,
+                // },
+              },
+            ],
           })
           .skip(skip)
           .sort(sortBy)
