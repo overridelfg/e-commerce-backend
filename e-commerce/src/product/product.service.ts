@@ -46,13 +46,15 @@ export class ProductService {
         ]
     }
 
+    const totalSize = (await this.productModel.find(productsQuery)).length;
     const products = await this.productModel.find(productsQuery).skip(skip).limit(perPage).sort(sortBy);
 
+    console.log(products.length)
     const productsListSize = await this.productModel.countDocuments();
 
     return {
       products,
-      length: productsListSize
+      length: totalSize
     };
   }
 
