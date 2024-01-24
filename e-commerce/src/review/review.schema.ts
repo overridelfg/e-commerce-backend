@@ -14,7 +14,6 @@ export class Review extends Document {
   @Prop()
   username: string;
 
-  // @Prop({ type: mongoose.Schema.Types.ObjectId, ref: 'Product' })
   @Prop()
   productId: string;
 

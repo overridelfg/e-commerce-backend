@@ -1,6 +1,7 @@
 import { Controller, Get, Param, Post, Body } from '@nestjs/common';
 import { ReviewService } from './review.service';
 import { Review } from './review.schema';
+import { AddReviewDTO } from './dto/add.review.dto';
 
 @Controller()
 export class ReviewController {
@@ -19,9 +20,8 @@ export class ReviewController {
   }
 
   @Post('reviews/add')
-  async addReview(@Body() review: Review): Promise<Review> {
-    console.log(review);
-    return this.reviewService.addReview(review);
+  async addReview(@Body() dto: AddReviewDTO): Promise<Review> {
+    return this.reviewService.addReview(dto);
   }
 
   @Get('reviews/rating/:productId')
