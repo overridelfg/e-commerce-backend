@@ -1,4 +1,5 @@
 import {
+  BadRequestException,
   HttpException,
   HttpStatus,
   Injectable,
@@ -28,40 +29,34 @@ export class CategoryService {
   async getCategoryById(id: string): Promise<Category> {
     try {
       const category = await this.categoryModel.findById(id).exec();
+
+      if(!category) {
+        throw new NotFoundException('Category not found');
+      }
       return category;
     } catch (err) {
-      throw new HttpException(
-        {
-          status: HttpStatus.FORBIDDEN,
-          error: 'This is a custom message',
-        },
-        HttpStatus.FORBIDDEN,
-        {
-          cause: err,
-        },
-      );
+      throw err;
     }
 
-    // if (!category) {
-    //   console.log(category);
-    //   throw new Error(`Category not found`);
-    // }
-
-    // return category;
   }
 
   async updateCategory(
     id: string,
     categoryDto: CategoryDTO,
   ): Promise<Category> {
-    const existingCategory = this.categoryModel.findByIdAndUpdate(
-      id,
-      categoryDto,
-    );
-    if (!existingCategory) {
-      throw new NotFoundException(`Category #${categoryDto.name} not found`);
+    try{
+      const existingCategory = this.categoryModel.findByIdAndUpdate(
+        id,
+        categoryDto,
+      );
+      if (!existingCategory) {
+        throw new NotFoundException(`Category #${categoryDto.name} not found`);
+      }
+      return existingCategory;
+    }catch(err) {
+        throw err;
     }
-    return existingCategory;
+
   }
 
   async deleteCategory(id: string) {

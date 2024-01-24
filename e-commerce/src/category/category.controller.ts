@@ -58,9 +58,13 @@ export class CategoryController {
     @Res() response: Response,
     @Param('id') id: string,
     @Body() categoryDto: CategoryDTO,
-  ): Promise<Category> {
-    console.log(id, categoryDto);
-    return this.categoryService.updateCategory(id, categoryDto);
+  ){
+    try{
+      return this.categoryService.updateCategory(id, categoryDto);
+    }catch(error) {
+      return response.status(error.status).json(error.response);
+    }
+
   }
 
   @Delete('categories/delete/:id')

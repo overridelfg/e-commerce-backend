@@ -14,5 +14,5 @@ export class AddReviewDTO {
     productId: string;
   
     @IsString()
-    createdAt: string;
+    createdAt: Date;
 }

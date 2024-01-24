@@ -18,7 +18,7 @@ export class Review extends Document {
   productId: string;
 
   @Prop()
-  createdAt: string;
+  createdAt: Date;
 }
 
 export const ReviewSchema = SchemaFactory.createForClass(Review);
