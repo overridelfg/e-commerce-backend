@@ -14,7 +14,7 @@ export class ProductService {
   ) {}
 
   async getAllProducts(dto: GetAllProductsDto = {}) {
-    const { sort, searchTerm } = dto;
+    const { sort, searchTerm, categoryNames, minPrice, maxPrice } = dto;
     const { skip, perPage } = this.paginationService.getPagination(dto);
 
     const sortBy = {};
@@ -29,36 +29,32 @@ export class ProductService {
       sortBy['createdAt'] = -1;
     }
 
-    const products = searchTerm
-      ? await this.productModel
-          .find({
-            $or: [
-              {
-                title: {
-                  $regex: searchTerm,
-                  $options: 'i',
-                },
-                // description: {
-                //   $regex: searchTerm,
-                //   $options: 'i',
-                // },
-                // category: {
-                //   name: searchTerm,
-                // },
+    const categoryNamesList  = categoryNames ? categoryNames.split(',') : [];
+
+    const productsQuery = {
+        $and: [
+          searchTerm ? { $or: [
+            {
+              "title": {
+                $regex: searchTerm,
+                $options: 'i',
               },
-            ],
-          })
-          .skip(skip)
-          .limit(perPage)
-          .sort(sortBy)
-      : await this.productModel.find().skip(skip).limit(perPage).sort(sortBy);
+            },
+          ]} : {},
+          categoryNames ? {"category.name": categoryNamesList} : {},
+          minPrice ? { price: { $gte: minPrice}} : {},
+          maxPrice ? { price: { $lte: maxPrice}} : {},
+        ]
+    }
 
-      const productsListSize = await this.productModel.countDocuments();
+    const products = await this.productModel.find(productsQuery).skip(skip).limit(perPage).sort(sortBy);
 
-      return {
-        products,
-        length: productsListSize
-      };
+    const productsListSize = await this.productModel.countDocuments();
+
+    return {
+      products,
+      length: productsListSize
+    };
   }
 
   async getProductById(id: string): Promise<Product> {

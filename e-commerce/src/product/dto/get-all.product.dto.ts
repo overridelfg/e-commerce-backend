@@ -16,4 +16,16 @@ export class GetAllProductsDto extends PaginationDTO {
   @IsOptional()
   @IsString()
   searchTerm?: string;
+
+  @IsOptional()
+  @IsString()
+  categoryNames?: string;
+
+  @IsOptional()
+  @IsString()
+  minPrice?: string;
+
+  @IsOptional()
+  @IsString()
+  maxPrice?: string;
 }
