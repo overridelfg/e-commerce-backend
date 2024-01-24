@@ -13,9 +13,9 @@ export class ProductService {
     private paginationService: PaginationService,
   ) {}
 
-  async getAllProducts(dto: GetAllProductsDto = {}): Promise<Product[]> {
+  async getAllProducts(dto: GetAllProductsDto = {}) {
     const { sort, searchTerm } = dto;
-    const { skip } = this.paginationService.getPagination(dto);
+    const { skip, perPage } = this.paginationService.getPagination(dto);
 
     const sortBy = {};
 
@@ -29,8 +29,7 @@ export class ProductService {
       sortBy['createdAt'] = -1;
     }
 
-    console.log(searchTerm);
-    return searchTerm
+    const products = searchTerm
       ? await this.productModel
           .find({
             $or: [
@@ -50,8 +49,16 @@ export class ProductService {
             ],
           })
           .skip(skip)
+          .limit(perPage)
           .sort(sortBy)
-      : await this.productModel.find().skip(skip).sort(sortBy);
+      : await this.productModel.find().skip(skip).limit(perPage).sort(sortBy);
+
+      const productsListSize = await this.productModel.countDocuments();
+
+      return {
+        products,
+        length: productsListSize
+      };
   }
 
   async getProductById(id: string): Promise<Product> {
@@ -59,6 +66,6 @@ export class ProductService {
   }
 
   async getProductsByCategory(category: string): Promise<Product[]> {
-    return await this.productModel.find({ category: category });
+    return await this.productModel.find({ "category.name": category });
   }
 }

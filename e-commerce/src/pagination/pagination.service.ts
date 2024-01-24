@@ -9,6 +9,6 @@ export class PaginationService {
 
     const skip: number = (page - 1) * perPage;
 
-    return { skip };
+    return { skip, perPage };
   }
 }

@@ -10,7 +10,7 @@ export class ProductController {
   @Get('products')
   async getAllProducts(
     @Query() queryDto: GetAllProductsDto,
-  ): Promise<Product[]> {
+  ) {
     return this.productService.getAllProducts(queryDto);
   }
 

@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { Review } from './review.schema';
+import { AddReviewDTO } from './dto/add.review.dto';
 
 @Injectable()
 export class ReviewService {
@@ -38,7 +39,7 @@ export class ReviewService {
       });
   }
 
-  async addReview(review: Review): Promise<Review> {
+  async addReview(review: AddReviewDTO): Promise<Review> {
     return this.reviewModel.create({
       comment: review.comment,
       rating: review.rating,
