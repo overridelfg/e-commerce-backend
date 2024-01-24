@@ -11,6 +11,6 @@ import { ReviewService } from 'src/review/review.service';
     MongooseModule.forFeature([{ name: Product.name, schema: ProductSchema }]),
   ],
   controllers: [ProductController],
-  providers: [ProductService, PaginationService, ReviewService],
+  providers: [ProductService, PaginationService],
 })
 export class ProductModule {}
