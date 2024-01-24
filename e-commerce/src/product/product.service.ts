@@ -29,7 +29,7 @@ export class ProductService {
       sortBy['createdAt'] = -1;
     }
 
-    const categoryNamesList  = categoryNames ? categoryNames.split(',') : [];
+    const categoryNamesList  = categoryNames ? categoryNames.split(',') : '';
 
     const productsQuery = {
         $and: [
@@ -42,8 +42,7 @@ export class ProductService {
             },
           ]} : {},
           categoryNames ? {"category.name": categoryNamesList} : {},
-          minPrice ? { price: { $gte: minPrice}} : {},
-          maxPrice ? { price: { $lte: maxPrice}} : {},
+          minPrice ? { price: { $gte: minPrice}} : {}
         ]
     }
 
