@@ -1,29 +1,40 @@
-import { BadRequestException, Injectable } from "@nestjs/common";
+import { BadRequestException, Injectable, UnauthorizedException } from "@nestjs/common";
 import { InjectModel } from "@nestjs/mongoose";
 import { Model } from "mongoose";
 import { AuthDto } from "./auth.dto";
-import argon2 from "argon2";
 import { User } from "src/mongo/user.schema";
 import { JwtService } from "@nestjs/jwt";
+import { UserService } from "src/user/user.service";
+import * as argon2 from "argon2";
+import { IUser } from "src/user/user.dto";
 
 @Injectable()
 export class AuthService {
   constructor(
-    @InjectModel(User.name)
-    private userModel: Model<User>,
-    private jwt: JwtService
-  ){}
+    private userService: UserService,
+    private jwtService: JwtService) {}
 
-  async register(dto: AuthDto) {
-    const existingUser = await this.userModel.findOne({ email: dto.email });
+  async validateUser(email: string, password: string){
+      const user = await this.userService.findUser(email);
+      const passwordIsMatch = await argon2.verify(user.password, password);
+      console.log(passwordIsMatch);
+      if(user && passwordIsMatch) {
+        return user;
+      }
 
-    if(existingUser) {
-        throw new BadRequestException("User already exists");
-    }
+      throw new UnauthorizedException("User or password are incorrect");
+  }
 
-    this.userModel.create({
-        email: dto.email,
-        password: await argon2.hash(dto.password)
-    });
+  async login(email: string, password: string) {
+    const payload = { email: email };
+    return {
+      email: payload.email,
+      access_token: this.jwtService.sign(payload),
+    };
+  }
+
+  async register(email: string, password: string) {
+    const user = await this.userService.createUser(email, password);
+    return user;
   }
 }
