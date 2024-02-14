@@ -17,7 +17,7 @@ export class AuthService {
   async validateUser(email: string, password: string){
       const user = await this.userService.findUser(email);
       const passwordIsMatch = await argon2.verify(user.password, password);
-      console.log(passwordIsMatch);
+
       if(user && passwordIsMatch) {
         return user;
       }
@@ -25,16 +25,33 @@ export class AuthService {
       throw new UnauthorizedException("User or password are incorrect");
   }
 
-  async login(email: string, password: string) {
-    const payload = { email: email };
+  async login(email: string) {
+    const user = await this.userService.findUser(email);
     return {
-      email: payload.email,
-      access_token: this.jwtService.sign(payload),
+      user: {
+        email: user.email,
+        _id: user._id,
+      },
+      tokens: {
+          accessToken: this.jwtService.sign({email, id: user._id}),
+      }
     };
   }
 
-  async register(email: string, password: string) {
-    const user = await this.userService.createUser(email, password);
+  async register(email: string, name: string, password: string) {
+    const user = await this.userService.createUser(email, name, password);
+    if(user) {
+      return {
+        user: {
+          email: user.email,
+          name: user.name,
+          _id: user._id
+        },
+        tokens: {
+          accessToken: this.jwtService.sign({email, id: user._id, name: user.name})
+        }
+      }
+    }
     return user;
   }
 }
