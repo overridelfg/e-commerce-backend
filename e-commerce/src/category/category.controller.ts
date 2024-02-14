@@ -25,7 +25,7 @@ export class CategoryController {
       console.log(categories);
       return response.status(HttpStatus.OK).json({
         message: 'All categories data found successfully',
-        categories: categories,
+        data: categories,
       });
     } catch (error) {
       return response.status(error.status).json(error.response);
