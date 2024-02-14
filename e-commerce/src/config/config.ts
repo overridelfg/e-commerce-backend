@@ -1,3 +1,3 @@
 export const config = () => ({
-    mongoUri: process.env.MONGO_URI
+    mongoUri: process.env.DATABASE_URI
 })
